@@ -1,3 +1,10 @@
+"""
+    Column: es la función principal para definir una columna de una tabla en SQLAlchemy. Se usa dentro de una clase que hereda de Base(declarative_base())
+    
+    Integer: representa numero enteros para la columna.
+    
+    String: representa cadenas de texto para la columna.
+"""
 from sqlalchemy import Column, Integer, String
 from app.database.connection import Base
 

@@ -1,3 +1,15 @@
+"""
+    BaseSettings: es una clase base de pydantic diseñada para cargar configuraciones de la aplicación desde:
+    · Variables de entorno (ENV)
+    · Archivos (.env)
+    · Diccionarios u otras fuentes.
+
+    Permite crear una clase de configuración con validación de tipos automática.
+
+    · Tipos verificados automáticamente (str, int, bool, etc.).
+    · Valores por defecto si no existen en el entorno
+    · Fácil integración con FastAPI u otras aplicaciones.
+"""
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):

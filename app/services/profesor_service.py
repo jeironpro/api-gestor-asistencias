@@ -1,3 +1,14 @@
+"""
+    Session: es el objeto que maneja todas las operaciones sobre la base de datos usando ORM. Es el intermediario entre tus modelos (clases Python) y la base de datos.
+
+    A través de una sesión puedes:
+    · Insertar registros (add, add_all)
+    · Consultar registros (query)
+    · Actualizar registros
+    · Eliminar registros
+    · Confirmar cambios con commit()
+    · Revertir cambios con rollback()
+"""
 from sqlalchemy.orm import Session
 from app.models.profesor import Profesor
 from app.schemas.profesor import ProfesorCreate

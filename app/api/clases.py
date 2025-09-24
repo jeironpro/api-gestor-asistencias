@@ -1,15 +1,33 @@
 """
-    APIRouter es una mini-app dentro de FastAPI, que permite organizar rutas de forma modular y escalable.
+    APIRouter: sirve para organizar rutas de manera modular. Permite separar los endpoints en módulos independientes y facilita agregar prefijos, tags y dependencias comunes a grupos de rutas.
+    
+    Depends: Sirve para inyectar dependencias en los endpoints. Permite reutilizar funciones que proporcionan servicios, autenticación, sesiones de base de datos, etc. FastAPI las llama automáticamente y pasa el resultado al endpoint. 
+    
+    HTTPException: Sirve para devolver errores HTTP con código y detalle. Detiene la ejecución del endpoint y envía una respuesta HTTP con el código de error.
 """
-# Importar el objeto APIRouter que permite organizar y agrupar rutas (endpoints) en la app
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
+"""
+    List: es un tipo genérico que se usa para anotar listas con tipos específicos de elementos. 
+    
+    · Se puede usar List[str] directamente.
+    · Se usa para tipado estático, validación y autocompletado.
+    · Muy común en pydantic y FastAPI para definir campos que son listas de valores.
+
+    · List[int]: lista de enteros.
+    · List[str]: lista de cadenas de texto.
+    · List[float]: lista de números flotantes.
+"""
 from typing import List
 from app.schemas.clase import ClaseCreate, ClaseResponse
 from app.services.clase_service import (create_clase, get_clases, get_clase_by_id, update_clase_by_id, delete_clase_by_id)
 from app.database.connection import SessionLocal
 
-# Crear el objeto
+"""
+    El prefix significa que todos los endpoints de ese archivo estará bajo esa ruta. 
+    El tags organiza mejor la documentación en /docs.
+"""
 router = APIRouter(prefix="/clases", tags=["Clases"])
 
 # Depedencia para obtener la sesión de la BD

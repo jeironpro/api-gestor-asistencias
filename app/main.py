@@ -82,26 +82,20 @@ app = FastAPI(
 )
 
 """ 
-    Cómo funciona el método de .include_router(): 
+    Cómo funciona el método de .include_router(): sirve para orgnaizar los endpoints en módulos separados y luego "montarlos" dentro de la aplicación principal.
 
+    · Registra todas las rutas de APIRouter en la aplicación principal.
+    · Permite añadir un prefijo (prefix="/api") que se antepone a todas las rutas de ese router.
+    · Permite establecer etiquetas (tags["api"]) o dependencias comunes.
 """
-"""
-    Registrar las rutas (endpoints) desde los módulos. 
-    El prefix significa que todos los endpoints de ese archivo estará bajo esa ruta. 
-    El tags organiza mejor la documentación en /docs.
-"""
+
+# Registrar las rutas (endpoints) desde los módulos. 
 app.include_router(asistencias.router)
 app.include_router(estudiantes.router)
 app.include_router(profesores.router)
 app.include_router(clases.router)
 
-"""
-    Base:
-    .metadata:
-    .create_all(bind):
-    engine:
-"""
-# Generar las tablas
+# Crear todas las tablas definidas
 Base.metadata.create_all(bind=engine)
 
 # Ruta principal de la API
