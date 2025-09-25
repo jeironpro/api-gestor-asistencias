@@ -44,3 +44,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     · Un atributo especial .metadata donde se guarda toda la información del esquema (tablas, columnas, relaciones...).
 """
 Base = declarative_base()
+
+# Depedencia para obtener la sesión de la BD
+def obtener_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

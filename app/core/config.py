@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = "jeironpro"
     DB_HOST: str = "localhost"
     DB_PORT: str = "3306"
-    DB_NAME: str = "gestor_asistencia"
+    DB_NAME: str = "gestor_asistencias"
 
     class Config:
         env_file = ".env"

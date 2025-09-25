@@ -70,7 +70,7 @@
 # Importar FastApi de su libreria
 from fastapi import FastAPI
 # Importar los endpoints desde la API
-from app.api import asistencias, estudiantes, profesores, clases
+from app.api import asistencias, clases, usuarios
 # Importar la base de datos y la conexión
 from app.database.connection import Base, engine
 
@@ -90,9 +90,8 @@ app = FastAPI(
 """
 
 # Registrar las rutas (endpoints) desde los módulos. 
+app.include_router(usuarios.router)
 app.include_router(asistencias.router)
-app.include_router(estudiantes.router)
-app.include_router(profesores.router)
 app.include_router(clases.router)
 
 # Crear todas las tablas definidas

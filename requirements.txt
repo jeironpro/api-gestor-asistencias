@@ -6,3 +6,5 @@ sqlalchemy
 pymysql
 pytest
 httpx
+passlib
+python-multipart
