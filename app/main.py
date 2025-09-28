@@ -24,8 +24,8 @@
     GET -> lee o trae datos del servidor. Ejemplo: obtener la lista de usuarios.
     POST -> crea un nuevo recurso en el servidor. Ejemplo: agregar un nuevo usuario.
     PUT -> actualiza completamente un recurso existente. Ejemplo: cambiar los datos de un usuario por completo.
-    DELETE -> borra un recurso existente. Ejemplo: eliminar un usuario por su id. 
-    
+    DELETE -> borra un recurso existente. Ejemplo: eliminar un usuario por su id.
+
     -----------------------------------------------------------------------------CORE-----------------------------------------------------------------------------------
     Qué es el core: es donde se coloca la configuración y la lógica central de la aplicación. No son endpoints, ni modelos, ni esquemas, sino las cosas fundamentales que necesita la API para funcionar. Se puede encontrar archivos como:
 
@@ -67,21 +67,7 @@
 
 """
 
-# Importar FastApi de su libreria
-from fastapi import FastAPI
-# Importar los endpoints desde la API
-from app.api import asistencias, clases, usuarios
-# Importar la base de datos y la conexión
-from app.database.connection import Base, engine
-
-# Inicializar la API agregando un titulo, descripción y versión para que aparezca en la documentación automática
-app = FastAPI(
-    title="Gestor de Asistencia", 
-    description= "API para gestionar estudiantes, profesores, clases y asistencias",
-    version="1.0.0"
-)
-
-""" 
+"""
     Cómo funciona el método de .include_router(): sirve para orgnaizar los endpoints en módulos separados y luego "montarlos" dentro de la aplicación principal.
 
     · Registra todas las rutas de APIRouter en la aplicación principal.
@@ -89,20 +75,112 @@ app = FastAPI(
     · Permite establecer etiquetas (tags["api"]) o dependencias comunes.
 """
 
-# Registrar las rutas (endpoints) desde los módulos. 
-app.include_router(usuarios.router)
-app.include_router(asistencias.router)
-app.include_router(clases.router)
-
-# Crear todas las tablas definidas
-Base.metadata.create_all(bind=engine)
-
-# Ruta principal de la API
-@app.get("/")
-def main():
-    return {"mensaje": "Bienvenido a mi API"}
-
 """
     Para iniciar el servidor:
     uvicorn app.main:app --reload
 """
+import requests
+# Importar FastApi de su libreria
+from fastapi import FastAPI, Request, Form
+# Importar los endpoints desde la API
+from app.api import asistencias, clases, usuarios
+# Importar la base de datos y la conexión
+from app.database.connection import Base, engine
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from app.database.connection import obtener_db
+from app.models.usuarios import Usuario
+from app.services.usuario_services import verificar_contrasena
+from starlette.middleware.sessions import SessionMiddleware
+
+# Inicializar la API agregando un titulo, descripción y versión para que aparezca en la documentación automática
+app = FastAPI(
+    title="Gestor de Asistencia",
+    description= "API para gestionar estudiantes, profesores, clases y asistencias",
+    version="1.0.0"
+)
+
+app.add_middleware(SessionMiddleware, secret_key=usuarios.CLAVE_SECRETA)
+
+# Registrar las rutas (endpoints) desde los módulos.
+app.include_router(usuarios.router)
+app.include_router(clases.router)
+app.include_router(asistencias.router)
+
+# Crear todas las tablas definidas
+Base.metadata.create_all(bind=engine)
+
+templates = Jinja2Templates(directory="app/templates")
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+def requerir_sesion(func):
+    async def envoltura(request: Request, *args, **kwargs):
+        if "usuario" not in request.session:
+            return RedirectResponse("/")
+        return await func(request, *args, **kwargs)
+    return envoltura
+
+# Ruta principal de la API
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/usuarios", response_class=HTMLResponse)
+def index(request: Request):
+    token = request.session.get("token")
+    cabeceras = {"Authorization": f"Bearer {token}"}
+
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/usuarios/", headers=cabeceras)
+        respuesta.raise_for_status()
+        usuarios = respuesta.json()
+    except requests.RequestException:
+        usuarios = []
+
+    return templates.TemplateResponse("usuarios.html", {"request": request, "usuarios": usuarios})
+
+@app.get("/clases", response_class=HTMLResponse)
+def index(request: Request):
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/clases/")
+        respuesta.raise_for_status()
+        clases = respuesta.json()
+    except requests.RequestException:
+        clases = []
+
+    return templates.TemplateResponse("clases.html", {"request": request, "clases": clases})
+
+@app.get("/asistencias", response_class=HTMLResponse)
+def index(request: Request):
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/asistencias/")
+        respuesta.raise_for_status()
+        asistencias = respuesta.json()
+    except requests.RequestException:
+        asistencias = []
+
+    return templates.TemplateResponse("asistencias.html", {"request": request, "asistencias": asistencias})
+
+@app.post("/inicio_sesion")
+def inicio_sesion(request: Request, correo_electronico: str = Form(...), contrasena: str = Form(...)):
+    try:
+        respuesta = requests.post("http://127.0.0.1:8000/usuarios/inicio_sesion/", data={"username": correo_electronico, "password": contrasena})
+        respuesta.raise_for_status()
+        datos = respuesta.json()
+        token = datos.get("access_token")
+
+        if not token:
+            raise Exception("No se recibio el token")
+        request.session["token"] = token
+        request.session["usuario"] = correo_electronico
+
+        return RedirectResponse("/usuarios", status_code=303)
+    except Exception:
+        return templates.TemplateResponse("index.html", {"request": request, "error": "Correo electronico o contraseña incorrectos"})
+
+@app.get("/cerrar_sesion")
+def cerrar_sesion(request: Request):
+    request.session.clear()
+    return RedirectResponse("/")

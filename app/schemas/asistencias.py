@@ -17,27 +17,30 @@
     populate_by_name: permite usar alias de campos al crear el modelo.
     validate_assignment: valida valores al reasignarlos después de crear el modelo.
     from_attributes: True habilita la creación de modelos a partir de objetos con atributos, no solo diccionarios. Es ideal para integrar pydantic con ORM. Se usa junto con model_config.
-"""
-from pydantic import BaseModel, ConfigDict
 
-"""
     date: es una clase dentro del módulo datetime. Representa una fecha sin hora, es decir: ño, mes y día. No incluye información de tiempo (hora, minuto, segundo).
 """
-from datetime import date
+from pydantic import BaseModel, ConfigDict
+from enum import Enum
+from datetime import datetime
 
-class AsistenciaBase(BaseModel):
-    fecha: date
-    estado: str
+class EstadoAsistencia(str, Enum):
+    presente = "presente"
+    ausente = "ausente"
+    tarde = "tarde"
 
 # Para crear asistencia (POST)
-class AsistenciaCreate(AsistenciaBase):
-    estudiante_id: int
-    clase_id: int
+class CrearAsistencia(BaseModel):
+    usuarioId: str
+    claseId: str
+    estado: EstadoAsistencia
 
 # Para devolver una asistencia en respuesta
-class AsistenciaResponse(AsistenciaBase):
-    id: int
-    estudiante_id: int
-    clase_id: int
+class RespuestaAsistencia(BaseModel):
+    id: str
+    usuarioId: str
+    claseId: str
+    fecha: datetime
+    estado: EstadoAsistencia
 
     model_config = ConfigDict(from_attributes=True)

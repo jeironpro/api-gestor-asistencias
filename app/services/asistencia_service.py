@@ -10,15 +10,15 @@
     · Revertir cambios con rollback()
 """
 from sqlalchemy.orm import Session
-from app.models.asistencia import Asistencia
-from app.schemas.asistencia import AsistenciaCreate
+from app.models.asistencias import Asistencia
+from app.schemas.asistencias import CrearAsistencia
+from typing import Optional
 
 # Crear asistencia
-def create_asistencia(db: Session, asistencia: AsistenciaCreate):
+def crear_asistencia_service(db: Session, asistencia: CrearAsistencia):
     db_asistencia = Asistencia(
-        fecha=asistencia.fecha, 
-        estudiante_id=asistencia.estudiante_id,
-        clase_id=asistencia.clase_id,
+        usuarioId=asistencia.usuarioId,
+        claseId=asistencia.claseId,
         estado=asistencia.estado
     )
 
@@ -27,39 +27,17 @@ def create_asistencia(db: Session, asistencia: AsistenciaCreate):
     db.refresh(db_asistencia)
     return db_asistencia
 
-# Listar asistencias
-def get_asistencias(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Asistencia).offset(skip).limit(limit).all()
+def obtener_asistencias_service(db: Session):
+    return db.query(Asistencia).all()
 
-# Buscar asistencia por ID
-def get_asistencia_by_id(db: Session, asistencia_id: int):
-    asistencia =  db.query(Asistencia).filter(Asistencia.id == asistencia_id).first() 
+# Obtener asistencias dependiendo si es por la clase o por el usuario
+def obtener_asistencia_service(db: Session, id_clase: Optional[str] = None, id_usuario: Optional[str] = None):
+    asistencia =  db.query(Asistencia)
 
-    if not asistencia:
-        return None
-    
-    return asistencia
+    if id_clase:
+        asistencia = asistencia.filter(Asistencia.claseId == id_clase)
 
-# Actualizar asistencia por ID
-def update_asistencia_by_id(db: Session, asistencia_id: int, asistencia_data: AsistenciaCreate):
-    asistencia = db.query(Asistencia).filter(Asistencia.id == asistencia_id).first()
+    if id_usuario:
+        asistencia = asistencia.filter(Asistencia.usuarioId == id_usuario)
 
-    if not asistencia:
-        return None
-    
-    asistencia.estado = asistencia_data.estado
-    
-    db.commit()
-    db.refresh(asistencia)
-    return asistencia
-
-# Eliminar asistencia por ID
-def delete_asistencia_by_id(db: Session, asistencia_id):
-    asistencia = db.query(Asistencia).filter(Asistencia.id == asistencia_id).first()
-
-    if not asistencia:
-        return None
-    
-    db.delete(asistencia)
-    db.commit()
-    return asistencia
+    return asistencia.all()

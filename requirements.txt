@@ -6,5 +6,9 @@ sqlalchemy
 pymysql
 pytest
 httpx
+requests
 passlib
 python-multipart
+jinja2
+aiofiles
+itsdangerous

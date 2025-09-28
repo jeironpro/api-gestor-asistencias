@@ -11,7 +11,7 @@ class RolUsuario(str, Enum):
 class CrearUsuario(BaseModel):
     nombre: str
     apellido: str
-    correoEletronico: str
+    correoElectronico: str
     contrasena: str
     rol: RolUsuario
 
@@ -25,14 +25,13 @@ class RespuestaUsuario(BaseModel):
     id: str
     nombre: str
     apellido: str
-    correoEletronico: str
+    correoElectronico: str
     rol: RolUsuario
     fechaRegistro: datetime
     activo: bool
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 class Token(BaseModel):
-    token_acceso: str
-    tipo_token: str
+    access_token: str
+    token_type: str

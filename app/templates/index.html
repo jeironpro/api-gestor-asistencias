@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="static/icons/asistencia.png" type="image/x-icon">
+    <title>Gestor de asistencias</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <main class="index">
+        <div class="logo-titulo">
+            <figure>
+                <img src="static/icons/asistencia.png" alt="Logo principal">
+            </figure>
+            <h1>Gestor de asistencias</h1>
+        </div>
+        <div class="inicio-sesion">
+            <h2>Inicio de sesi&oacute;n</h2>
+            <form action="/inicio_sesion" method="post">
+                <div class="control">
+                    <label for="correo_electronico">Correo electr&oacute;nico</label>
+                    <input type="text" name="correo_electronico" id="correo_electronico">
+                </div>
+                <div class="control">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="contrasena-icono">
+                        <input type="password" name="contrasena" id="contrasena">
+                        <span class="material-symbols-outlined mostrar-contrasena" id="mostrar-ocultar-contrasena">visibility_off</span>
+                    </div>
+                </div>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        const inputContrasena = document.getElementById("contrasena");
+        const iconoMostrarOcultar = document.getElementById("mostrar-ocultar-contrasena");
+
+        iconoMostrarOcultar.addEventListener("click", () => {
+            if (inputContrasena.type == "password") {
+                inputContrasena.type = "text";
+                iconoMostrarOcultar.textContent = "visibility";
+            } else {
+                inputContrasena.type = "password";
+                iconoMostrarOcultar.textContent = "visibility_off";
+            }
+        });
+    </script>
+</body>
+</html>

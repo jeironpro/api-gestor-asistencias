@@ -3,7 +3,25 @@ from app.models.usuarios import Usuario
 from app.schemas.usuarios import CrearUsuario, ActualizarUsuario
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def crear_usuario(db: Session, usuario: CrearUsuario):
+    hashed_contrasena = hash_password(usuario.contrasena)
+    db_usuario = Usuario(
+        nombre = usuario.nombre,
+        apellido = usuario.apellido,
+        correoElectronico = usuario.correoElectronico,
+        contrasena = hashed_contrasena,
+        rol = usuario.rol
+    )
+
+    db.add(db_usuario)
+    db.commit()
+    db.refresh(db_usuario)
+    return db_usuario
 
 def obtener_usuarios(db: Session):
     return db.query(Usuario).all()
@@ -12,22 +30,7 @@ def obtener_usuario_id(db: Session, id_usuario: str):
     return db.query(Usuario).filter(Usuario.id == id_usuario, Usuario.activo == True).first()
 
 def obtener_usuario_correo_electronico(db: Session, correo_electronico: str):
-    return db.query(Usuario).filter(Usuario.correoEletronico == correo_electronico, Usuario.activo == True).first()
-
-def crear_usuario(db: Session, usuario: CrearUsuario):
-    hashed_contrasena = pwd_context.hash(usuario.contrasena)
-    db_usuario = Usuario(
-        nombre = usuario.nombre,
-        apellido = usuario.apellido,
-        correo_electronico = usuario.correoEletronico,
-        contrasena = hashed_contrasena,
-        rol = usuario.rol
-    )
-
-    db.add()
-    db.commit()
-    db.refresh(db_usuario)
-    return db_usuario
+    return db.query(Usuario).filter(Usuario.correoElectronico == correo_electronico, Usuario.activo == True).first()
 
 def actualizar_usuario_id(db: Session, db_usuario: Usuario, actualizar_usuario: ActualizarUsuario):
     if actualizar_usuario.nombre:
@@ -35,7 +38,7 @@ def actualizar_usuario_id(db: Session, db_usuario: Usuario, actualizar_usuario: 
     if actualizar_usuario.apellido:
         db_usuario.apellido = actualizar_usuario.apellido
     if actualizar_usuario.contrasena:
-        db_usuario.contrasena = pwd_context.hash(actualizar_usuario.contrasena)
+        db_usuario.contrasena = hash_password(actualizar_usuario.contrasena)
     if actualizar_usuario.rol:
         db_usuario.rol = actualizar_usuario.rol
     db.commit()
@@ -47,5 +50,5 @@ def desactivar_usuario(db: Session, db_usuario: Usuario):
     db.commit()
     return db_usuario
 
-def verificar_contrasena(contrasena, hashed_contrasena):
+def verificar_contrasena(contrasena: str, hashed_contrasena: str) -> bool:
     return pwd_context.verify(contrasena, hashed_contrasena)

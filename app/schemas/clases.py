@@ -19,18 +19,21 @@
     from_attributes: True habilita la creación de modelos a partir de objetos con atributos, no solo diccionarios. Es ideal para integrar pydantic con ORM. Se usa junto con model_config.
 """
 from pydantic import BaseModel, ConfigDict
+from datetime import datetime
 
 class ClaseBase(BaseModel):
     nombre: str
-    horario: str
+    fecha: datetime
+    horaInicio: datetime
+    horaFin: datetime
 
 # Para crear una clase (POST)
-class ClaseCreate(ClaseBase):
-    profesor_id: int
+class CrearClase(ClaseBase):
+    pass
 
 # Para devolver una clase en respuesta
-class ClaseResponse(ClaseBase):
-    id: int
-    profesor_id: int
+class RespuestaClase(ClaseBase):
+    id: str
+    profesorId: str
 
     model_config = ConfigDict(from_attributes=True)
