@@ -2,8 +2,11 @@ import enum
 import uuid
 from sqlalchemy import Column, String, Boolean, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from app.database.connection import Base
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+zona_es = ZoneInfo("Europe/Madrid")
 
 class RolUsuario(str, enum.Enum):
     admin = "admin"
@@ -19,7 +22,7 @@ class Usuario(Base):
     correoElectronico = Column(String(100), unique=True, index=True, nullable=False)
     contrasena = Column(String(100), nullable=False)
     rol = Column(Enum(RolUsuario), nullable=False)
-    fechaRegistro = Column(DateTime, default=datetime.utcnow)
+    fechaRegistro = Column(DateTime, default=lambda: datetime.now(zona_es))
     activo = Column(Boolean, default=True)
 
     clases = relationship("Clase", back_populates="profesor")

@@ -10,9 +10,13 @@
     Permite definir cascadas, es decir, eliminar automáticamente los objetos relacionados si se borra el padre.
 """
 import uuid
-from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime, ForeignKey, Time
 from sqlalchemy.orm import relationship
 from app.database.connection import Base
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+zona_es = ZoneInfo("Europe/Madrid")
 
 class Clase(Base):
     # Nombre de la tabla en la base de datos
@@ -21,9 +25,9 @@ class Clase(Base):
     # Datos y claves foraneas
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     nombre = Column(String(50), nullable=False)
-    fecha = Column(DateTime, nullable=False)
-    horaInicio = Column(DateTime, nullable=False)
-    horaFin = Column(DateTime, nullable=False)
+    fecha = Column(DateTime, default=lambda: datetime.now(zona_es))
+    horaInicio = Column(Time, nullable=False)
+    horaFin = Column(Time, nullable=False)
     profesorId = Column(String(36), ForeignKey("usuarios.id"))
 
     # Relaciones

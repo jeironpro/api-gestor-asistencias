@@ -94,7 +94,13 @@
                             <td>{{ usuario.correoElectronico }}</td>
                             <td>{{ usuario.rol }}</td>
                             <td>{{ usuario.fechaRegistro }}</td>
-                            <td>{{ usuario.activo }}</td>
+                            <td>
+                                {% if usuario.activo %}
+                                    Activo
+                                {% else %}
+                                    Inactivo
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

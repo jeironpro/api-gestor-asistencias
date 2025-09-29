@@ -31,7 +31,7 @@ router = APIRouter(prefix="/clases", tags=["clases"])
 
 # Crear clase
 @router.post("/", response_model=RespuestaClase)
-def crear_clase(clase: CrearClase, db: Session = Depends(obtener_db), profesor: Usuario = Depends(requerir_rol(RolUsuario.admin))):
+def crear_clase(clase: CrearClase, db: Session = Depends(obtener_db), profesor: Usuario = Depends(requerir_rol(RolUsuario.profesor))):
     return crear_clase_service(db, clase, profesor.id)
 
 # Listar clases

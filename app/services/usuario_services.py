@@ -5,16 +5,16 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
-def hash_password(password: str) -> str:
+def cifrar_contrasena(password: str) -> str:
     return pwd_context.hash(password)
 
 def crear_usuario(db: Session, usuario: CrearUsuario):
-    hashed_contrasena = hash_password(usuario.contrasena)
+    contrasena_cifrada = cifrar_contrasena(usuario.contrasena)
     db_usuario = Usuario(
         nombre = usuario.nombre,
         apellido = usuario.apellido,
         correoElectronico = usuario.correoElectronico,
-        contrasena = hashed_contrasena,
+        contrasena = contrasena_cifrada,
         rol = usuario.rol
     )
 
@@ -38,7 +38,7 @@ def actualizar_usuario_id(db: Session, db_usuario: Usuario, actualizar_usuario: 
     if actualizar_usuario.apellido:
         db_usuario.apellido = actualizar_usuario.apellido
     if actualizar_usuario.contrasena:
-        db_usuario.contrasena = hash_password(actualizar_usuario.contrasena)
+        db_usuario.contrasena = cifrar_contrasena(actualizar_usuario.contrasena)
     if actualizar_usuario.rol:
         db_usuario.rol = actualizar_usuario.rol
     db.commit()
@@ -50,5 +50,5 @@ def desactivar_usuario(db: Session, db_usuario: Usuario):
     db.commit()
     return db_usuario
 
-def verificar_contrasena(contrasena: str, hashed_contrasena: str) -> bool:
-    return pwd_context.verify(contrasena, hashed_contrasena)
+def verificar_contrasena(contrasena: str, contrasena_cifrada: str) -> bool:
+    return pwd_context.verify(contrasena, contrasena_cifrada)

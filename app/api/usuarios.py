@@ -21,7 +21,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime, timedelta
-from jwt import PyJWTError
+from jwt.exceptions import InvalidTokenError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from app.models.usuarios import RolUsuario, Usuario
 from app.schemas.usuarios import RolUsuario, CrearUsuario, ActualizarUsuario, RespuestaUsuario, Token
@@ -47,7 +47,7 @@ def obtener_usuario_actual(db: Session = Depends(obtener_db), token: str = Depen
 
         if id_usuario is None:
             raise HTTPException(status_code=401, detail="Token inválido")
-    except PyJWTError:
+    except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Token inválido...")
     
     usuario = obtener_usuario_id(db, id_usuario)
@@ -59,8 +59,6 @@ def obtener_usuario_actual(db: Session = Depends(obtener_db), token: str = Depen
 
 def requerir_rol(rol: RolUsuario):
     def verificar_rol(usuario: Usuario = Depends(obtener_usuario_actual)):
-        print(usuario.rol)
-        print(rol)
         if usuario.rol != rol:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permiso denegado")
         return usuario

@@ -85,7 +85,7 @@ from fastapi import FastAPI, Request, Form
 # Importar los endpoints desde la API
 from app.api import asistencias, clases, usuarios
 # Importar la base de datos y la conexión
-from app.database.connection import Base, engine
+from app.database.connection import Base, engine, SessionLocal
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -93,6 +93,8 @@ from app.database.connection import obtener_db
 from app.models.usuarios import Usuario
 from app.services.usuario_services import verificar_contrasena
 from starlette.middleware.sessions import SessionMiddleware
+from app.init_admin import crear_admin
+from datetime import datetime
 
 # Inicializar la API agregando un titulo, descripción y versión para que aparezca en la documentación automática
 app = FastAPI(
@@ -122,46 +124,16 @@ def requerir_sesion(func):
         return await func(request, *args, **kwargs)
     return envoltura
 
+@app.on_event("startup")
+def iniciar_api():
+    db = SessionLocal()
+    crear_admin(db)
+    db.close()
+
 # Ruta principal de la API
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-@app.get("/usuarios", response_class=HTMLResponse)
-def index(request: Request):
-    token = request.session.get("token")
-    cabeceras = {"Authorization": f"Bearer {token}"}
-
-    try:
-        respuesta = requests.get("http://127.0.0.1:8000/usuarios/", headers=cabeceras)
-        respuesta.raise_for_status()
-        usuarios = respuesta.json()
-    except requests.RequestException:
-        usuarios = []
-
-    return templates.TemplateResponse("usuarios.html", {"request": request, "usuarios": usuarios})
-
-@app.get("/clases", response_class=HTMLResponse)
-def index(request: Request):
-    try:
-        respuesta = requests.get("http://127.0.0.1:8000/clases/")
-        respuesta.raise_for_status()
-        clases = respuesta.json()
-    except requests.RequestException:
-        clases = []
-
-    return templates.TemplateResponse("clases.html", {"request": request, "clases": clases})
-
-@app.get("/asistencias", response_class=HTMLResponse)
-def index(request: Request):
-    try:
-        respuesta = requests.get("http://127.0.0.1:8000/asistencias/")
-        respuesta.raise_for_status()
-        asistencias = respuesta.json()
-    except requests.RequestException:
-        asistencias = []
-
-    return templates.TemplateResponse("asistencias.html", {"request": request, "asistencias": asistencias})
 
 @app.post("/inicio_sesion")
 def inicio_sesion(request: Request, correo_electronico: str = Form(...), contrasena: str = Form(...)):
@@ -184,3 +156,116 @@ def inicio_sesion(request: Request, correo_electronico: str = Form(...), contras
 def cerrar_sesion(request: Request):
     request.session.clear()
     return RedirectResponse("/")
+
+@app.get("/usuarios", response_class=HTMLResponse)
+def index(request: Request):
+    token = request.session.get("token")
+    cabeceras = {"Authorization": f"Bearer {token}"}
+
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/usuarios/", headers=cabeceras)
+        respuesta.raise_for_status()
+        usuarios = respuesta.json()
+    except requests.RequestException:
+        usuarios = []
+
+    return templates.TemplateResponse("usuarios.html", {"request": request, "usuarios": usuarios})
+
+@app.get("/crear_usuario", response_class=HTMLResponse)
+def pagina_crear_usuario(request: Request):
+    return templates.TemplateResponse("crear_usuario.html", {"request": request})
+
+@app.post("/crear_usuario")
+def crear_usuario(request: Request, nombre: str = Form(...), apellido: str = Form(...), correo_electronico: str = Form(...), contrasena: str = Form(...), rol: str = Form(...)):
+    if not nombre or not apellido or not correo_electronico or not contrasena:
+        return templates.TemplateResponse("crear_usuario.html", {"request": request, "error": "Todos los campos son obligatorios"})
+    
+    try:
+        respuesta = requests.post(
+            "http://127.0.0.1:8000/usuarios/", 
+            json = {
+                "nombre": nombre, 
+                "apellido": apellido, 
+                "correoElectronico": correo_electronico, 
+                "contrasena": contrasena,
+                "rol": rol
+            }
+        )
+        respuesta.raise_for_status()
+        return RedirectResponse("/usuarios", status_code=303)
+    except requests.exceptions.RequestException as e:
+        return templates.TemplateResponse("crear_usuario.html", {"request": request, "error": f"{str(e)}"})
+    
+@app.get("/clases", response_class=HTMLResponse)
+def index(request: Request):
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/clases/")
+        respuesta.raise_for_status()
+        clases = respuesta.json()
+    except requests.RequestException:
+        clases = []
+
+    return templates.TemplateResponse("clases.html", {"request": request, "clases": clases})
+
+@app.get("/crear_clase", response_class=HTMLResponse)
+def pagina_crear_clase(request: Request):
+    return templates.TemplateResponse("crear_clase.html", {"request": request})
+
+@app.post("/crear_clase")
+def crear_clase(request: Request, nombre: str = Form(...), fecha: str = Form(...), hora_inicio: str = Form(...), hora_fin: str = Form(...)):
+    if not nombre or not fecha or not hora_inicio or not hora_fin:
+        return templates.TemplateResponse("crear_clase.html", {"request": request, "error": "Todos los campos son obligatorios"})
+
+    fecha_dt = datetime.strptime(fecha, "%Y-%m-%d").date()
+    hora_inicio_dt = datetime.strptime(hora_inicio, "%H:%M").time()
+    hora_fin_dt = datetime.strptime(hora_fin, "%H:%M").time()
+
+    token = request.session.get("token")
+    cabeceras = {"Authorization": f"Bearer {token}"}
+
+    try:
+        respuesta = requests.post(
+            "http://127.0.0.1:8000/clases/",
+            json={
+                "nombre": nombre,
+                "fecha": fecha_dt.strftime("%Y-%m-%d"),
+                "horaInicio": hora_inicio_dt.strftime("%H:%M"),
+                "horaFin": hora_fin_dt.strftime("%H:%M")
+            },
+            headers=cabeceras
+        )
+        respuesta.raise_for_status()
+        return RedirectResponse("/clases", status_code=303)
+    except requests.exceptions.RequestException as e:
+        return templates.TemplateResponse("crear_clase.html", {"request": request, "error": f"{str(e)}"})
+
+@app.get("/asistencias", response_class=HTMLResponse)
+def index(request: Request):
+    try:
+        respuesta = requests.get("http://127.0.0.1:8000/asistencias/")
+        respuesta.raise_for_status()
+        asistencias = respuesta.json()
+    except requests.RequestException:
+        asistencias = []
+
+    return templates.TemplateResponse("asistencias.html", {"request": request, "asistencias": asistencias})
+
+@app.get("/crear_asistencia", response_class=HTMLResponse)
+def pagina_crear_asistencia(request: Request):
+    return templates.TemplateResponse("crear_asistencia.html", {"request": request})
+
+@app.post("/crear_asistencia")
+def crear_asistencia(request: Request, usuario_id: str = Form(...), clase_id: str = Form(...), estado: str = Form(...)):
+    try:
+        respuesta = requests.post(
+            "http://127.0.0.1:8000/asistencias/",
+            json={
+                "usuarioId": usuario_id,
+                "claseId": clase_id,
+                "estado": estado
+            }
+        )
+        respuesta.raise_for_status()
+        return RedirectResponse("/asistencias", status_code=303)
+    except requests.exceptions.RequestException as e:
+        return templates.TemplateResponse("crear_asistencia.html", {"request": request, "error": f"{str(e)}"})
