@@ -10,8 +10,8 @@
     · Revertir cambios con rollback()
 """
 from sqlalchemy.orm import Session
-from app.models.asistencias import Asistencia
-from app.schemas.asistencias import CrearAsistencia
+from models.asistencias import Asistencia
+from schemas.asistencias import CrearAsistencia
 from typing import Optional
 
 # Crear asistencia

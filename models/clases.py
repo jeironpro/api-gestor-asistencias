@@ -3,38 +3,33 @@
     
     ForeignKey: define una relación con otra tabla (clave foránea). Se pasa como argumento una referencia en forma de cadena (tabla.columna).
     
-    Date: representa fechas (solo dia, mes y año) para columna.
-    
     String: representa cadenas de texto para la columna.
 
     relationship: no crea columnas en la base de datos. Es una función de SQLAlchemy que define cómo las clases Python (modelos) se relacionan entre sí. Permite acceder a los objetos relacionados de forma automática, sin tener que escribir joins manuales en SQL.
 
     Permite definir cascadas, es decir, eliminar automáticamente los objetos relacionados si se borra el padre.
 """
-import enum
 import uuid
-from sqlalchemy import Column, DateTime, String, ForeignKey, Enum
-
+from sqlalchemy import Column, String, DateTime, ForeignKey, Time
 from sqlalchemy.orm import relationship
-from app.database.connection import Base
+from database.connection import Base
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-class EstadoAsistencia(str, enum.Enum):
-    presente = "presente"
-    ausente = "ausente"
-    tarde = "tarde"
+zona_es = ZoneInfo("Europe/Madrid")
 
-class Asistencia(Base):
+class Clase(Base):
     # Nombre de la tabla en la base de datos
-    __tablename__ = "asistencias"
+    __tablename__ = "clases"
 
     # Datos y claves foraneas
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    usuarioId = Column(String(36), ForeignKey("usuarios.id"))
-    claseId = Column(String(36), ForeignKey("clases.id"))
-    fecha = Column(DateTime, default=datetime.utcnow)
-    estado = Column(Enum(EstadoAsistencia), nullable=False)
+    nombre = Column(String(50), nullable=False)
+    fecha = Column(DateTime, default=lambda: datetime.now(zona_es))
+    horaInicio = Column(Time, nullable=False)
+    horaFin = Column(Time, nullable=False)
+    profesorId = Column(String(36), ForeignKey("usuarios.id"))
 
     # Relaciones
-    usuario = relationship("Usuario", back_populates="asistencias")
-    clase = relationship("Clase", back_populates="asistencias")
+    profesor = relationship("Usuario", back_populates="clases")
+    asistencias = relationship("Asistencia", back_populates="clase")

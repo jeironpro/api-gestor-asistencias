@@ -23,10 +23,10 @@ from typing import List
 from datetime import datetime, timedelta
 from jwt.exceptions import InvalidTokenError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.models.usuarios import RolUsuario, Usuario
-from app.schemas.usuarios import RolUsuario, CrearUsuario, ActualizarUsuario, RespuestaUsuario, Token
-from app.services.usuario_services import obtener_usuarios, obtener_usuario_id, obtener_usuario_correo_electronico, crear_usuario, actualizar_usuario_id, desactivar_usuario, verificar_contrasena
-from app.database.connection import obtener_db
+from models.usuarios import RolUsuario, Usuario
+from schemas.usuarios import RolUsuario, CrearUsuario, ActualizarUsuario, RespuestaUsuario, Token
+from services.usuario_services import obtener_usuarios, obtener_usuario_id, obtener_usuario_correo_electronico, crear_usuario, actualizar_usuario_id, desactivar_usuario, verificar_contrasena
+from database.connection import obtener_db
 
 CLAVE_SECRETA = secrets.token_hex(32) # 32 carácteres hexadecimales
 

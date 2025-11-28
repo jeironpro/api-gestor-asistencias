@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models.usuarios import Usuario
-from app.schemas.usuarios import CrearUsuario, ActualizarUsuario
+from models.usuarios import Usuario
+from schemas.usuarios import CrearUsuario, ActualizarUsuario
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")

@@ -21,11 +21,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
-from app.models.usuarios import Usuario, RolUsuario
-from app.api.usuarios import requerir_rol
-from app.schemas.clases import CrearClase, RespuestaClase
-from app.services.clase_service import crear_clase_service, obtener_clases_service
-from app.database.connection import obtener_db
+from models.usuarios import Usuario, RolUsuario
+from api.usuarios import requerir_rol
+from schemas.clases import CrearClase, RespuestaClase
+from services.clase_service import crear_clase_service, obtener_clases_service
+from database.connection import obtener_db
 
 router = APIRouter(prefix="/clases", tags=["clases"])
 

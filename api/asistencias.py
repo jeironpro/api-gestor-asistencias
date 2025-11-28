@@ -23,9 +23,9 @@ from sqlalchemy.orm import Session
 
 from typing import List
 from typing import List
-from app.schemas.asistencias import CrearAsistencia, RespuestaAsistencia
-from app.services.asistencia_service import crear_asistencia_service, obtener_asistencias_service, obtener_asistencia_service
-from app.database.connection import obtener_db
+from schemas.asistencias import CrearAsistencia, RespuestaAsistencia
+from services.asistencia_service import crear_asistencia_service, obtener_asistencias_service, obtener_asistencia_service
+from database.connection import obtener_db
 
 router = APIRouter(prefix="/asistencias", tags=["Asistencias"])
 

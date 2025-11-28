@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.core.config import settings
+from core.config import settings
 
 # Construcción de la URL de la base de datos con el tipo de base datos + libreria://usuario/contraseña@anfitrion:puerto que usa el tipo de base de datos/nombre de la base datos desde settings
 DATABASE_URL = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"

@@ -1,5 +1,5 @@
-fastapi
-uvicorn[standard]
+fastapi[standard]
+uvicorn
 pydantic
 pydantic-settings
 sqlalchemy
@@ -7,7 +7,6 @@ pymysql
 pytest
 httpx
 requests
-jwt
 pyjwt
 passlib
 argon2-cffi

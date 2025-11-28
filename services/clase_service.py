@@ -10,8 +10,8 @@
     · Revertir cambios con rollback()
 """
 from sqlalchemy.orm import Session
-from app.models.clases import Clase
-from app.schemas.clases import CrearClase
+from models.clases import Clase
+from schemas.clases import CrearClase
 
 # Crear clase
 def crear_clase_service(db: Session, clase: CrearClase, profesorId: str):
