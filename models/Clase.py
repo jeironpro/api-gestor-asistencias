@@ -10,12 +10,12 @@ class Clase(SQLModel, table=True):
     Modelo que define la tabla de clases.
 
     Campos:
-        id: str (primary key) - Identificador único del usuario (UUID4 genera un identificador único global de 128 bits).
+        id: str (pk) - UUID4 genera un identificador único global de 128 bits.
         nombre: str - Nombre de la clase.
         fecha: datetime - Fecha de la clase.
         horaInicio: time - Hora de inicio de la clase.
         horaFin: time - Hora de fin de la clase.
-        profesorId: str - Identificador del profesor (clave foranea).
+        profesorId: str - Identificador del profesor (fk).
     """
 
     __tablename__ = "clase"  # Nombre de la tabla en la base de datos

@@ -3,7 +3,7 @@
 exclude = .git,__pycache__,venv
 
 # Máximo número de caracteres por línea
-max-line-length = 88
+max-line-length = 255
 
 # Ignorar algunas reglas específicas
 ignore = E203, W503

@@ -6,7 +6,6 @@ from schemas.asistencia import CrearAsistencia, RespuestaAsistencia
 from services.asistencia_service import (
     crear_asistencia_service,
     obtener_asistencias_service,
-    obtener_asistencia_service,
 )
 from database.connection import obtener_db
 

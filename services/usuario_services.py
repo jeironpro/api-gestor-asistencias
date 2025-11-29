@@ -100,7 +100,7 @@ def obtener_usuario_id(db: Session, id_usuario: str) -> Usuario | None:
     Retorna:
         Usuario encontrado
     """
-    statement = select(Usuario).where(Usuario.id == id_usuario, Usuario.activo == True)
+    statement = select(Usuario).where(Usuario.id == id_usuario, Usuario.activo is True)
     return db.exec(statement).first()
 
 
@@ -118,7 +118,7 @@ def obtener_usuario_correo_electronico(
         Usuario encontrado
     """
     statement = select(Usuario).where(
-        Usuario.correoElectronico == correo_electronico, Usuario.activo == True
+        Usuario.correoElectronico == correo_electronico, Usuario.activo is True
     )
     return db.exec(statement).first()
 

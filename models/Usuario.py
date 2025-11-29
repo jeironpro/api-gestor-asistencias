@@ -11,7 +11,7 @@ class Usuario(SQLModel, table=True):
     Modelo que define la tabla de usuarios.
 
     Campos:
-        id: str (primary key) - Identificador único del usuario (UUID4 genera un identificador único global de 128 bits).
+        id: str (pk) - UUID4 genera un identificador único global de 128 bits.
         nombre: str - Nombre del usuario.
         apellido: str - Apellido del usuario.
         correoElectronico: str - Correo electrónico del usuario.

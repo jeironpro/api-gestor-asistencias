@@ -14,14 +14,18 @@ from services.clase_service import crear_clase_service
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
 # Crear la base de datos de pruebas
-engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+engine_test = create_engine(
+    TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+
+# Crear la base de datos de pruebas
+SQLModel.metadata.create_all(bind=engine_test)
 
 
 def obtener_test_session():
-    SQLModel.metadata.create_all(bind=engine)
-    with Session(engine) as session:
+    # Obtiene una sesión de la base de datos de pruebas.
+    with Session(engine_test) as session:
         yield session
-    SQLModel.metadata.drop_all(bind=engine)
 
 
 app.dependency_overrides[obtener_db] = obtener_test_session
@@ -29,16 +33,15 @@ app.dependency_overrides[obtener_db] = obtener_test_session
 
 @pytest.fixture(scope="function")
 def db():
-    # Devuelve una sesión del engine de test
-    with Session(engine) as session:
-        SQLModel.metadata.create_all(bind=engine)
+    # Devuelve una sesión del engine_test de test
+    with Session(engine_test) as session:
         yield session
         session.rollback()
-        SQLModel.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function")
 def client():
+    # Devuelve un cliente de prueba
     with TestClient(app) as c:
         yield c
 

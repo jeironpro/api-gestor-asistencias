@@ -11,11 +11,11 @@ class Asistencia(SQLModel, table=True):
     Modelo que define la tabla de asistencias.
 
     Campos:
-        id: str (primary key) - Identificador único del usuario (UUID4 genera un identificador único global de 128 bits).
+        id: str (pk) - UUID4 genera un identificador único global de 128 bits.
         fecha: datetime - Fecha de la asistencia.
         estado: EstadoAsistencia - Estado de la asistencia.
-        usuarioId: str - Identificador del usuario (clave foranea).
-        claseId: str - Identificador de la clase (clave foranea).
+        usuarioId: str - Identificador del usuario (fk).
+        claseId: str - Identificador de la clase (fk).
     """
 
     __tablename__ = "asistencia"  # Nombre de la tabla en la base de datos

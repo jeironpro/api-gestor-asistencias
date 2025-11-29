@@ -9,7 +9,6 @@ from jwt.exceptions import InvalidTokenError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from models.Usuario import RolUsuario, Usuario
 from schemas.usuario import (
-    RolUsuario,
     CrearUsuario,
     ActualizarUsuario,
     RespuestaUsuario,
