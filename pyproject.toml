@@ -1,0 +1,23 @@
+[project]
+name = "API-Gestor-De-Asistencia"
+version = "1.0.0"
+dependencies = [
+    "fastapi[standard]",
+    "uvicorn",
+    "sqlmodel",
+    "pymysql",
+    "python-dotenv",
+    "pyjwt",
+    "passlib",
+    "argon2-cffi",
+    "itsdangerous",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

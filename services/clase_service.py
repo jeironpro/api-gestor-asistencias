@@ -1,37 +1,122 @@
-"""
-    Session: es el objeto que maneja todas las operaciones sobre la base de datos usando ORM. Es el intermediario entre tus modelos (clases Python) y la base de datos.
+# Importaciones
+from fastapi import HTTPException, status
+from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
+from models.Clase import Clase
+from schemas.clase import CrearClase
 
-    A través de una sesión puedes:
-    · Insertar registros (add, add_all)
-    · Consultar registros (query)
-    · Actualizar registros
-    · Eliminar registros
-    · Confirmar cambios con commit()
-    · Revertir cambios con rollback()
-"""
-from sqlalchemy.orm import Session
-from models.clases import Clase
-from schemas.clases import CrearClase
+def crear_clase_service(db: Session, clase: CrearClase, profesorId: str) -> Clase:
+    """
+        Crea una nueva clase en la base de datos.
+        
+        Argumentos:
+            db: Sesión de base de datos
+            clase: Datos de la clase a crear
+            profesorId: ID del profesor que imparte la clase
+        
+        Retorna:
+            Clase creada
+        
+        Excepciones:
+            HTTPException: Si el profesor no existe
+    """
+    try:
+        db_clase = Clase(
+            nombre=clase.nombre,
+            fecha=clase.fecha,
+            horaInicio=clase.horaInicio,
+            horaFin=clase.horaFin,
+            profesorId=profesorId
+        )
 
-# Crear clase
-def crear_clase_service(db: Session, clase: CrearClase, profesorId: str):
-    db_clase = Clase(
-        nombre=clase.nombre,
-        fecha=clase.fecha,
-        horaInicio=clase.horaInicio,
-        horaFin=clase.horaFin,
-        profesorId=profesorId
-    )
+        db.add(db_clase)
+        db.commit()
+        db.refresh(db_clase)
+        
+        return db_clase
+    
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error al crear la clase. Verifica que el profesor existe."
+        )
 
-    db.add(db_clase)
+def obtener_clases_service(db: Session, skip: int = 0, limit: int = 100) -> list[Clase]:
+    """
+        Obtiene una lista de clases con paginación.
+        
+        Argumentos:
+            db: Sesión de base de datos
+            skip: Número de registros a saltar
+            limit: Número máximo de registros a devolver
+        
+        Retorna:
+            Lista de clases
+    """
+    statement = select(Clase).offset(skip).limit(limit)
+    return db.exec(statement).all()
+
+def obtener_clase_id_service(db: Session, id_clase: str) -> Clase:
+    """
+        Obtiene una clase por su ID.
+        Lanza HTTPException 404 si no existe.
+        
+        Argumentos:
+            db: Sesión de base de datos
+            id_clase: ID de la clase
+        
+        Retorna:
+            Clase encontrada
+        
+        Excepciones:
+            HTTPException: Si la clase no existe
+    """
+    statement = select(Clase).where(Clase.id == id_clase)
+    clase = db.exec(statement).first()
+    
+    if not clase:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Clase no encontrada"
+        )
+    
+    return clase
+
+def actualizar_clase_service(db: Session, id_clase: str, clase_data: CrearClase) -> Clase:
+    """
+        Actualiza una clase existente.
+        
+        Argumentos:
+            db: Sesión de base de datos
+            id_clase: ID de la clase a actualizar
+            clase_data: Nuevos datos de la clase
+    
+        Retorna:
+            Clase actualizada
+    
+        Excepciones:
+            HTTPException: Si la clase no existe
+    """
+    db_clase = obtener_clase_id_service(db, id_clase)
+    
+    db_clase.nombre = clase_data.nombre
+    db_clase.fecha = clase_data.fecha
+    db_clase.horaInicio = clase_data.horaInicio
+    db_clase.horaFin = clase_data.horaFin
+    
     db.commit()
     db.refresh(db_clase)
     return db_clase
 
-# Obtener clase
-def obtener_clases_service(db: Session):
-    return db.query(Clase).all()
-
-# Obtener clase por ID
-def obtener_clase_id_service(db: Session, id_clase: str):
-    return db.query(Clase).filter(Clase.id == id_clase).first()
+def eliminar_clase_service(db: Session, id_clase: str) -> None:
+    """
+        Elimina una clase de la base de datos.
+        
+        Argumentos:
+            db: Sesión de base de datos
+            id_clase: ID de la clase a eliminar
+    """ 
+    db_clase = obtener_clase_id_service(db, id_clase)
+    db.delete(db_clase)
+    db.commit()

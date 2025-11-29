@@ -1,26 +1,79 @@
+# Importaciones
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import uuid
+from datetime import date, time
+from sqlmodel import create_engine, Session, SQLModel
 from fastapi.testclient import TestClient
-from app.database.connection import Base
-from app.main import app
+from main import app
+from models.Usuario import Usuario, RolUsuario
+from schemas.clase import CrearClase
+from services.clase_service import crear_clase_service
 
-# Usando sqlite en memoria porque es rápido y sin tocar la base de datos real.
+# Base de datos de pruebas
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
+# Crear la base de datos de pruebas
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def db():
     # Crear las tablas en la base de datos de pruebas
-    Base.metadata.create_all(bind=engine)
-    session = TestingSessionLocal()
-    yield session
-    session.close()
-    Base.metadata.drop_all(bind=engine)
+    SQLModel.metadata.create_all(bind=engine)
+
+    with Session(engine) as session:
+        yield session
+        session.rollback()
+
+    SQLModel.metadata.drop_all(bind=engine)
 
 @pytest.fixture(scope="function")
 def client():
     with TestClient(app) as c:
         yield c
+
+@pytest.fixture(scope="function")
+def profesor_test(db):
+    # Crear un profesor de prueba
+    profesor = Usuario(
+        id=str(uuid.uuid4()),
+        nombre="Test",
+        apellido="Profesor",
+        correoElectronico="profesor@test.com",
+        contrasena="hashed_password",
+        rol=RolUsuario.profesor
+    )
+    db.add(profesor)
+    db.commit()
+    db.refresh(profesor)
+
+    return profesor
+
+@pytest.fixture(scope="function")
+def estudiante_test(db):
+    # Crear un estudiante y profesor de prueba
+    estudiante = Usuario(
+        id=str(uuid.uuid4()),
+        nombre="Test",
+        apellido="Estudiante",
+        correoElectronico="estudiante@test.com",
+        contrasena="hashed_password",
+        rol=RolUsuario.estudiante
+    )
+    db.add(estudiante)
+    db.commit()
+    db.refresh(estudiante)
+
+    return estudiante
+
+@pytest.fixture(scope="function")
+def clase_test(db, profesor_test):
+    # Crear una clase de prueba
+    clase_data = CrearClase(
+        nombre="DAW 1A",
+        fecha=date(2025, 9, 21),
+        horaInicio=time(8, 0),
+        horaFin=time(13, 30)
+    )
+    nueva_clase = crear_clase_service(db, clase_data, profesor_test.id)
+
+    return nueva_clase
