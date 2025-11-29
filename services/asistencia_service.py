@@ -162,14 +162,18 @@ def actualizar_asistencia_service(
     return db_asistencia
 
 
-def eliminar_asistencia_service(db: Session, id_asistencia: str) -> None:
+def eliminar_asistencia_service(db: Session, id_asistencia: str) -> Asistencia:
     """
     Elimina una asistencia de la base de datos.
 
     Argumentos:
         db: Sesión de base de datos
         id_asistencia: ID de la asistencia a eliminar
+
+    Retorna:
+        Asistencia eliminada
     """
     db_asistencia = obtener_asistencia_id_service(db, id_asistencia)
     db.delete(db_asistencia)
     db.commit()
+    return db_asistencia

@@ -21,11 +21,18 @@ class CrearClase(SQLModel):
     horaFin: time
 
 
-class RespuestaClase(SQLModel):
+class RespuestaClase(CrearClase):
     """
     Esquema para devolver una clase.
 
-    Campos:
+    Hereda de CrearClase.
+    Campos heredados:
+        nombre: str - Nombre de la clase.
+        fecha: date - Fecha de la clase.
+        horaInicio: time - Hora de inicio de la clase.
+        horaFin: time - Hora de fin de la clase.
+
+    Campos adicionales:
         id: str - Identificador único del usuario
         profesorId: str - Identificador del usuario (clave foranea).
     """

@@ -100,9 +100,6 @@ def actualizar_clase_service(
 
     Retorna:
         Clase actualizada
-
-    Excepciones:
-        HTTPException: Si la clase no existe
     """
     db_clase = obtener_clase_id_service(db, id_clase)
 
@@ -116,14 +113,18 @@ def actualizar_clase_service(
     return db_clase
 
 
-def eliminar_clase_service(db: Session, id_clase: str) -> None:
+def eliminar_clase_service(db: Session, id_clase: str) -> Clase:
     """
     Elimina una clase de la base de datos.
 
     Argumentos:
         db: Sesión de base de datos
         id_clase: ID de la clase a eliminar
+
+    Retorna:
+        Clase eliminada
     """
     db_clase = obtener_clase_id_service(db, id_clase)
     db.delete(db_clase)
     db.commit()
+    return db_clase

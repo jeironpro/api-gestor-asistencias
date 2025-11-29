@@ -4,6 +4,7 @@ from datetime import date, time
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
 from database.connection import obtener_db
@@ -17,7 +18,9 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 
 # Crear la base de datos de pruebas
 engine_test = create_engine(
-    TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
 )
 
 

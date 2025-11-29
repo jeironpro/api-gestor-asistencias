@@ -22,7 +22,7 @@ app.include_router(clase.router)
 app.include_router(asistencia.router)
 
 # Crear todas las tablas definidas
-engine = engine()
+# engine = engine() # Ya es una instancia importada
 
 if engine:
     SQLModel.metadata.create_all(engine)
