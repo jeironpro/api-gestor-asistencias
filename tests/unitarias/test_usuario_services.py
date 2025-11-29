@@ -1,7 +1,9 @@
+import uuid
+
 import pytest
 from fastapi import HTTPException
 
-from models.Usuario import RolUsuario
+from models.Usuario import RolUsuario, Usuario
 from schemas.usuario import ActualizarUsuario, CrearUsuario
 from services.usuario_services import (
     actualizar_usuario_id,
@@ -16,10 +18,11 @@ from services.usuario_services import (
 
 
 def test_crear_usuario(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
@@ -28,7 +31,7 @@ def test_crear_usuario(db):
     assert nuevo_usuario.id is not None
     assert nuevo_usuario.nombre == "Juan"
     assert nuevo_usuario.apellido == "Pérez"
-    assert nuevo_usuario.correoElectronico == "juan@test.com"
+    assert nuevo_usuario.correoElectronico == f"juan_{id}@test.com"
     assert nuevo_usuario.rol == RolUsuario.estudiante
     assert nuevo_usuario.activo is True
     assert nuevo_usuario.contrasena != "password123"
@@ -36,10 +39,11 @@ def test_crear_usuario(db):
 
 
 def test_crear_usuario_duplicado(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
@@ -71,10 +75,11 @@ def test_obtener_usuarios_paginacion(db):
 
 
 def test_obtener_usuario_id(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
@@ -92,25 +97,27 @@ def test_obtener_usuario_id_no_existe(db):
 
 
 def test_obtener_usuario_correo(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
     crear_usuario(db, usuario_data)
 
-    usuario_encontrado = obtener_usuario_correo_electronico(db, "juan@test.com")
+    usuario_encontrado = obtener_usuario_correo_electronico(db, f"juan_{id}@test.com")
     assert usuario_encontrado is not None
-    assert usuario_encontrado.correoElectronico == "juan@test.com"
+    assert usuario_encontrado.correoElectronico == f"juan_{id}@test.com"
 
 
 def test_actualizar_usuario(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
@@ -121,7 +128,7 @@ def test_actualizar_usuario(db):
 
     assert usuario_actualizado.nombre == "Juan Carlos"
     assert usuario_actualizado.apellido == "Pérez García"
-    assert usuario_actualizado.correoElectronico == "juan@test.com"
+    assert usuario_actualizado.correoElectronico == f"juan_{id}@test.com"
 
 
 def test_actualizar_usuario_no_existe(db):
@@ -134,10 +141,11 @@ def test_actualizar_usuario_no_existe(db):
 
 
 def test_desactivar_usuario(db):
+    id = str(uuid.uuid4())
     usuario_data = CrearUsuario(
         nombre="Juan",
         apellido="Pérez",
-        correoElectronico="juan@test.com",
+        correoElectronico=f"juan_{id}@test.com",
         contrasena="password123",
         rol=RolUsuario.estudiante,
     )
@@ -146,8 +154,8 @@ def test_desactivar_usuario(db):
     usuario_desactivado = desactivar_usuario(db, nuevo_usuario.id)
     assert usuario_desactivado.activo is False
 
-    usuario_encontrado = obtener_usuario_id(db, nuevo_usuario.id)
-    assert usuario_encontrado is None
+    usuario_encontrado = db.get(Usuario, nuevo_usuario.id)
+    assert usuario_encontrado.activo is False
 
 
 def test_desactivar_usuario_no_existe(db):

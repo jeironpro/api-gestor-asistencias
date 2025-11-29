@@ -12,7 +12,7 @@ from models.Usuario import RolUsuario, Usuario
 from schemas.clase import CrearClase
 from services.clase_service import crear_clase_service
 
-# Base de datos de pruebas
+# URL conexión de la base de datos de pruebas
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
 # Crear la base de datos de pruebas
@@ -20,30 +20,35 @@ engine_test = create_engine(
     TEST_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 
-# Crear la base de datos de pruebas
-SQLModel.metadata.create_all(bind=engine_test)
 
-
-def obtener_test_session():
-    # Obtiene una sesión de la base de datos de pruebas.
-    with Session(engine_test) as session:
-        yield session
-
-
-app.dependency_overrides[obtener_db] = obtener_test_session
+@pytest.fixture(autouse=True, scope="function")
+def reset_db():
+    # Reinicia la base de datos antes de cada test
+    SQLModel.metadata.drop_all(bind=engine_test)
+    SQLModel.metadata.create_all(bind=engine_test)
+    yield
 
 
 @pytest.fixture(scope="function")
 def db():
     # Devuelve una sesión del engine_test de test
     with Session(engine_test) as session:
+        SQLModel.metadata.create_all(bind=engine_test)
         yield session
         session.rollback()
 
 
+@pytest.fixture(autouse=True)
+def override_db_dependency(db):
+    # Sobrescribe la dependencia de DB de FastAPI para usar la de test
+    app.dependency_overrides[obtener_db] = lambda: db
+    yield
+    app.dependency_overrides = {}
+
+
 @pytest.fixture(scope="function")
 def client():
-    # Devuelve un cliente de prueba
+    # Devuelve un cliente de pruebas
     with TestClient(app) as c:
         yield c
 
@@ -51,14 +56,16 @@ def client():
 @pytest.fixture(scope="function")
 def profesor_test(db):
     # Crear un profesor de prueba
+    id = str(uuid.uuid4())
     profesor = Usuario(
-        id=str(uuid.uuid4()),
+        id=id,
         nombre="Test",
         apellido="Profesor",
-        correoElectronico="profesor@test.com",
+        correoElectronico=f"profesor_{id}@test.com",
         contrasena="hashed_password",
         rol=RolUsuario.profesor,
     )
+
     db.add(profesor)
     db.commit()
     db.refresh(profesor)
@@ -69,11 +76,12 @@ def profesor_test(db):
 @pytest.fixture(scope="function")
 def estudiante_test(db):
     # Crear un estudiante y profesor de prueba
+    id = str(uuid.uuid4())
     estudiante = Usuario(
-        id=str(uuid.uuid4()),
+        id=id,
         nombre="Test",
         apellido="Estudiante",
-        correoElectronico="estudiante@test.com",
+        correoElectronico=f"estudiante_{id}@test.com",
         contrasena="hashed_password",
         rol=RolUsuario.estudiante,
     )
