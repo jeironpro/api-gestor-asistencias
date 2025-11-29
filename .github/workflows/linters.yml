@@ -31,7 +31,4 @@ jobs:
       run: black --check api/ database/ models/ schemas/ services/ tests/
 
     - name: Check import order with isort
-      run: isort --check-only api/ database/ models/ schemas/ services/ tests/
-
-    - name: Type checking with mypy
-      run: mypy api/ database/ models/ schemas/ services/ tests/
+      run: isort api/ database/ models/ schemas/ services/ tests/

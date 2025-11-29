@@ -22,4 +22,6 @@ app.include_router(clase.router)
 app.include_router(asistencia.router)
 
 # Crear todas las tablas definidas
-SQLModel.metadata.create_all(engine)
+
+if engine:
+    SQLModel.metadata.create_all(engine)
