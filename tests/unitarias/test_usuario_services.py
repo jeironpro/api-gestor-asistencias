@@ -1,17 +1,18 @@
 import pytest
+from fastapi import HTTPException
+
+from models.Usuario import RolUsuario
+from schemas.usuario import ActualizarUsuario, CrearUsuario
 from services.usuario_services import (
-    crear_usuario,
-    obtener_usuarios,
-    obtener_usuario_id,
-    obtener_usuario_correo_electronico,
     actualizar_usuario_id,
-    desactivar_usuario,
     cifrar_contrasena,
+    crear_usuario,
+    desactivar_usuario,
+    obtener_usuario_correo_electronico,
+    obtener_usuario_id,
+    obtener_usuarios,
     verificar_contrasena,
 )
-from schemas.usuario import CrearUsuario, ActualizarUsuario
-from models.Usuario import RolUsuario
-from fastapi import HTTPException
 
 
 def test_crear_usuario(db):

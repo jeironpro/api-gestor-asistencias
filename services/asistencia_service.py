@@ -1,12 +1,14 @@
 # Importaciones
-from fastapi import HTTPException, status
-from sqlmodel import Session, select
-from sqlalchemy.exc import IntegrityError
-from models.Asistencia import Asistencia
-from models.Usuario import Usuario
-from models.Clase import Clase
-from schemas.asistencia import CrearAsistencia
 from typing import Optional
+
+from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
+
+from models.Asistencia import Asistencia
+from models.Clase import Clase
+from models.Usuario import Usuario
+from schemas.asistencia import CrearAsistencia
 
 
 def crear_asistencia_service(db: Session, asistencia: CrearAsistencia) -> Asistencia:

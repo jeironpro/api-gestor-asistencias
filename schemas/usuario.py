@@ -1,8 +1,10 @@
 # Importaciones
-from sqlmodel import SQLModel
-from models.Usuario import RolUsuario
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
+from sqlmodel import SQLModel
+
+from models.Usuario import RolUsuario
 
 
 class CrearUsuario(SQLModel):

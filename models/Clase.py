@@ -1,7 +1,9 @@
 # Importaciones
 import uuid
-from sqlmodel import SQLModel, Field
 from datetime import datetime, time
+
+from sqlmodel import Field, SQLModel
+
 from database.zone_horary import madrid_utc
 
 

@@ -1,13 +1,15 @@
 # Importaciones
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
-from typing import List
+
+from database.connection import obtener_db
 from schemas.asistencia import CrearAsistencia, RespuestaAsistencia
 from services.asistencia_service import (
     crear_asistencia_service,
     obtener_asistencias_service,
 )
-from database.connection import obtener_db
 
 # Rutas de asistencia
 router = APIRouter(prefix="/asistencias", tags=["Asistencias"])

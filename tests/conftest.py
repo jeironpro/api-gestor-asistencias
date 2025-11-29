@@ -1,12 +1,14 @@
 # Importaciones
-import pytest
 import uuid
 from datetime import date, time
-from sqlmodel import create_engine, Session, SQLModel
+
+import pytest
 from fastapi.testclient import TestClient
-from main import app
+from sqlmodel import Session, SQLModel, create_engine
+
 from database.connection import obtener_db
-from models.Usuario import Usuario, RolUsuario
+from main import app
+from models.Usuario import RolUsuario, Usuario
 from schemas.clase import CrearClase
 from services.clase_service import crear_clase_service
 

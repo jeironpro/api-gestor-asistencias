@@ -1,15 +1,16 @@
 import pytest
-from services.asistencia_service import (
-    crear_asistencia_service,
-    obtener_asistencias_service,
-    obtener_asistencia_service,
-    obtener_asistencia_id_service,
-    actualizar_asistencia_service,
-    eliminar_asistencia_service,
-)
-from schemas.asistencia import CrearAsistencia
-from models.Asistencia import EstadoAsistencia
 from fastapi import HTTPException
+
+from models.Asistencia import EstadoAsistencia
+from schemas.asistencia import CrearAsistencia
+from services.asistencia_service import (
+    actualizar_asistencia_service,
+    crear_asistencia_service,
+    eliminar_asistencia_service,
+    obtener_asistencia_id_service,
+    obtener_asistencia_service,
+    obtener_asistencias_service,
+)
 
 
 def test_crear_asistencia_service(db, estudiante_test, clase_test):

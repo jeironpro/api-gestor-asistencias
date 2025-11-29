@@ -1,12 +1,13 @@
 # Importaciones
-from sqlmodel import Relationship
 from typing import TYPE_CHECKING
+
+from sqlmodel import Relationship
 
 # Importaciones de modelos
 if TYPE_CHECKING:
-    from .Usuario import Usuario
-    from .Clase import Clase
     from .Asistencia import Asistencia
+    from .Clase import Clase
+    from .Usuario import Usuario
 
 # Relaciones Usuario
 Usuario.clases = Relationship(

@@ -1,29 +1,26 @@
 # Importaciones
-import jwt
 import secrets
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
-from typing import List
 from datetime import datetime, timedelta
-from jwt.exceptions import InvalidTokenError
+from typing import List
+
+import jwt
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jwt.exceptions import InvalidTokenError
+from sqlmodel import Session
+
+from database.connection import obtener_db
 from models.Usuario import RolUsuario, Usuario
-from schemas.usuario import (
-    CrearUsuario,
-    ActualizarUsuario,
-    RespuestaUsuario,
-    Token,
-)
+from schemas.usuario import ActualizarUsuario, CrearUsuario, RespuestaUsuario, Token
 from services.usuario_services import (
-    obtener_usuarios,
-    obtener_usuario_id,
-    obtener_usuario_correo_electronico,
-    crear_usuario,
     actualizar_usuario_id,
+    crear_usuario,
     desactivar_usuario,
+    obtener_usuario_correo_electronico,
+    obtener_usuario_id,
+    obtener_usuarios,
     verificar_contrasena,
 )
-from database.connection import obtener_db
 
 CLAVE_SECRETA = secrets.token_hex(32)  # 32 carácteres hexadecimales
 

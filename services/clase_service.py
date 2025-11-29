@@ -1,7 +1,8 @@
 # Importaciones
 from fastapi import HTTPException, status
-from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
+
 from models.Clase import Clase
 from schemas.clase import CrearClase
 

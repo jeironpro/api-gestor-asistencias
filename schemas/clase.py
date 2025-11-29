@@ -1,6 +1,7 @@
 # Importaciones
-from sqlmodel import SQLModel
 from datetime import date, time
+
+from sqlmodel import SQLModel
 
 
 class CrearClase(SQLModel):

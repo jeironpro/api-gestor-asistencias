@@ -1,14 +1,16 @@
-import pytest
 from datetime import date, time
-from services.clase_service import (
-    crear_clase_service,
-    obtener_clases_service,
-    obtener_clase_id_service,
-    actualizar_clase_service,
-    eliminar_clase_service,
-)
-from schemas.clase import CrearClase
+
+import pytest
 from fastapi import HTTPException
+
+from schemas.clase import CrearClase
+from services.clase_service import (
+    actualizar_clase_service,
+    crear_clase_service,
+    eliminar_clase_service,
+    obtener_clase_id_service,
+    obtener_clases_service,
+)
 
 
 def test_crear_clase_service(db, profesor_test):

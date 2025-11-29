@@ -1,12 +1,14 @@
 # Importaciones
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
-from typing import List
-from models.Usuario import Usuario, RolUsuario
+
 from api.usuario import requerir_rol
+from database.connection import obtener_db
+from models.Usuario import RolUsuario, Usuario
 from schemas.clase import CrearClase, RespuestaClase
 from services.clase_service import crear_clase_service, obtener_clases_service
-from database.connection import obtener_db
 
 # Rutas de clase
 router = APIRouter(prefix="/clases", tags=["clases"])

@@ -1,7 +1,9 @@
 # Importaciones
-from sqlmodel import SQLModel
-from models.Asistencia import EstadoAsistencia
 from datetime import datetime
+
+from sqlmodel import SQLModel
+
+from models.Asistencia import EstadoAsistencia
 
 
 class CrearAsistencia(SQLModel):

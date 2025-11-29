@@ -1,10 +1,11 @@
 # Importaciones
 from fastapi import HTTPException, status
-from sqlmodel import Session, select
-from sqlalchemy.exc import IntegrityError
-from models.Usuario import Usuario
-from schemas.usuario import CrearUsuario, ActualizarUsuario
 from passlib.context import CryptContext
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
+
+from models.Usuario import Usuario
+from schemas.usuario import ActualizarUsuario, CrearUsuario
 
 # Inicialización del contexto de cifrado
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
