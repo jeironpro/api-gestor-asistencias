@@ -6,11 +6,16 @@ from dotenv import load_dotenv
 # Cargar variables de entorno
 load_dotenv()
 
-# URL de conexión de la base de datos
-DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Crear motor de la base de datos
-engine = create_engine(DATABASE_URL, echo=True)
+# Obtener motor de la base de datos
+def engine():
+    # URL de conexión de la base de datos
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+    if not DATABASE_URL:
+        DATABASE_URL = "sqlite:///:memory:"
+
+    return create_engine(DATABASE_URL, echo=True)
 
 
 # Depedencia para obtener la sesión de la BD

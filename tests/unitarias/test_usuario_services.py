@@ -29,7 +29,7 @@ def test_crear_usuario(db):
     assert nuevo_usuario.apellido == "Pérez"
     assert nuevo_usuario.correoElectronico == "juan@test.com"
     assert nuevo_usuario.rol == RolUsuario.estudiante
-    assert nuevo_usuario.activo == True
+    assert nuevo_usuario.activo is True
     assert nuevo_usuario.contrasena != "password123"
     assert verificar_contrasena("password123", nuevo_usuario.contrasena)
 
@@ -143,7 +143,7 @@ def test_desactivar_usuario(db):
     nuevo_usuario = crear_usuario(db, usuario_data)
 
     usuario_desactivado = desactivar_usuario(db, nuevo_usuario.id)
-    assert usuario_desactivado.activo == False
+    assert usuario_desactivado.activo is False
 
     usuario_encontrado = obtener_usuario_id(db, nuevo_usuario.id)
     assert usuario_encontrado is None
@@ -161,5 +161,5 @@ def test_cifrar_y_verificar_contrasena():
     hashed = cifrar_contrasena(password)
 
     assert hashed != password
-    assert verificar_contrasena(password, hashed) == True
-    assert verificar_contrasena("password_incorrecto", hashed) == False
+    assert verificar_contrasena(password, hashed) is True
+    assert verificar_contrasena("password_incorrecto", hashed) is False
