@@ -41,7 +41,7 @@ La creación de esta API fue para aprender y practicar el desarrollo de una API 
     - Ejecutar: pytest
 
 ## 🤖 GitHub Actions
-Este proyecto utiliza GitHub Actions para automatizar tareas de calidad y validación del código:
+- Este proyecto utiliza GitHub Actions para automatizar tareas de calidad y validación del código:
     - Linters: Verifican que el código cumpla con las convenciones de estilo y buenas prácticas.
     - Tests: Ejecutan automáticamente las pruebas para asegurar que el comportamiento del proyecto es el esperado.
     - CI (FastAPI CI): Se ejecuta en cada push o pull request hacia la rama main, instalando las dependencias y ejecutando los tests para garantizar que el proyecto cumpla con las expectativas.
