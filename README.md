@@ -2,8 +2,8 @@
 
 ## 📌 Descripción
 Este proyecto forma parte de mi portafolio personal.  
-El objetivo es demostrar buenas prácticas de programación, organización y documentación en GitHub.
-Se creo para aprender y practicar el desarrollo de una API REST con Python (FastAPI).
+El objetivo es demostrar buenas prácticas de programación, organización y documentación en GitHub.  
+La creación de esta API fue para aprender y practicar el desarrollo de una API REST con Python (FastAPI).
 
 ## 📚 Características
 - Gestión de usuarios
@@ -12,13 +12,13 @@ Se creo para aprender y practicar el desarrollo de una API REST con Python (Fast
 
 ## 📋 Requisitos
 - Python >= 3.12
-- fastapi
-- uvicorn
-- python-dotenv
-- sqlmodel
-- passlib
-- argon2-cffi
-- pyjwt
+
+Instalación de python:
+    - Linux:
+        - Ubuntu/Debian: sudo apt update && sudo apt upgrade && sudo apt install python3.12
+        - Fedora: sudo dnf install python3.12
+    - Windows: Descargar e instalar desde https://www.python.org/downloads/
+    - MacOS: Descargar e instalar desde https://www.python.org/downloads/
 
 ## 🛠️ Variables de entorno
 - DATABASE_URL
