@@ -11,10 +11,16 @@ from database.connection import obtener_db
 # Rutas de clase
 router = APIRouter(prefix="/clases", tags=["clases"])
 
+
 # Ruta para crear una clase
 @router.post("/", response_model=RespuestaClase)
-def crear_clase(clase: CrearClase, db: Session = Depends(obtener_db), profesor: Usuario = Depends(requerir_rol(RolUsuario.profesor))):
+def crear_clase(
+    clase: CrearClase,
+    db: Session = Depends(obtener_db),
+    profesor: Usuario = Depends(requerir_rol(RolUsuario.profesor)),
+):
     return crear_clase_service(db, clase, profesor.id)
+
 
 # Ruta para obtener lista de clases
 @router.get("/", response_model=List[RespuestaClase])

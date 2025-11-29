@@ -15,6 +15,7 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 # Crear la base de datos de pruebas
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 
+
 @pytest.fixture(scope="function")
 def db():
     # Crear las tablas en la base de datos de pruebas
@@ -26,10 +27,12 @@ def db():
 
     SQLModel.metadata.drop_all(bind=engine)
 
+
 @pytest.fixture(scope="function")
 def client():
     with TestClient(app) as c:
         yield c
+
 
 @pytest.fixture(scope="function")
 def profesor_test(db):
@@ -40,13 +43,14 @@ def profesor_test(db):
         apellido="Profesor",
         correoElectronico="profesor@test.com",
         contrasena="hashed_password",
-        rol=RolUsuario.profesor
+        rol=RolUsuario.profesor,
     )
     db.add(profesor)
     db.commit()
     db.refresh(profesor)
 
     return profesor
+
 
 @pytest.fixture(scope="function")
 def estudiante_test(db):
@@ -57,13 +61,14 @@ def estudiante_test(db):
         apellido="Estudiante",
         correoElectronico="estudiante@test.com",
         contrasena="hashed_password",
-        rol=RolUsuario.estudiante
+        rol=RolUsuario.estudiante,
     )
     db.add(estudiante)
     db.commit()
     db.refresh(estudiante)
 
     return estudiante
+
 
 @pytest.fixture(scope="function")
 def clase_test(db, profesor_test):
@@ -72,7 +77,7 @@ def clase_test(db, profesor_test):
         nombre="DAW 1A",
         fecha=date(2025, 9, 21),
         horaInicio=time(8, 0),
-        horaFin=time(13, 30)
+        horaFin=time(13, 30),
     )
     nueva_clase = crear_clase_service(db, clase_data, profesor_test.id)
 

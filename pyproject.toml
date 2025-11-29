@@ -10,7 +10,12 @@ dependencies = [
     "pyjwt",
     "passlib",
     "argon2-cffi",
-    "itsdangerous",
+    "pre-commit",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest"
 ]
 
 [tool.pytest.ini_options]

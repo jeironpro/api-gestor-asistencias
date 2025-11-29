@@ -10,13 +10,13 @@ if TYPE_CHECKING:
 
 # Relaciones Usuario
 Usuario.clases = Relationship(
-    back_populates="profesor", 
-    sa_relationship_kwargs={"cascade": "all, delete-orphan, save-update"}
+    back_populates="profesor",
+    sa_relationship_kwargs={"cascade": "all, delete-orphan, save-update"},
 )
 
 Usuario.asistencias = Relationship(
-    back_populates="usuario", 
-    sa_relationship_kwargs={"cascade": "all, delete-orphan, save-update"}
+    back_populates="usuario",
+    sa_relationship_kwargs={"cascade": "all, delete-orphan, save-update"},
 )
 
 # Relaciones Clase

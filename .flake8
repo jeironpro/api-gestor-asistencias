@@ -1,0 +1,15 @@
+[flake8]
+# Directorios a ignorar
+exclude = .git,__pycache__,venv
+
+# Máximo número de caracteres por línea
+max-line-length = 88
+
+# Ignorar algunas reglas específicas
+ignore = E203, W503
+
+# Mostrar estadísticas al finalizar
+statistics = True
+
+# Opcional: habilitar estrictamente chequeo de tipos y docstrings
+# select = E,F,W,C90
