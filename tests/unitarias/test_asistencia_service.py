@@ -9,7 +9,6 @@ from services.asistencia_service import (
 )
 from schemas.asistencia import CrearAsistencia
 from models.Asistencia import EstadoAsistencia
-from models.Usuario import Usuario, RolUsuario
 from fastapi import HTTPException
 
 

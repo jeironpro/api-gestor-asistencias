@@ -8,8 +8,6 @@ from services.clase_service import (
     eliminar_clase_service,
 )
 from schemas.clase import CrearClase
-from models.Clase import Clase
-from models.Usuario import Usuario, RolUsuario
 from fastapi import HTTPException
 
 

@@ -1,5 +1,4 @@
 import pytest
-from sqlmodel import create_engine, Session, SQLModel
 from services.usuario_services import (
     crear_usuario,
     obtener_usuarios,
@@ -11,7 +10,7 @@ from services.usuario_services import (
     verificar_contrasena,
 )
 from schemas.usuario import CrearUsuario, ActualizarUsuario
-from models.Usuario import Usuario, RolUsuario
+from models.Usuario import RolUsuario
 from fastapi import HTTPException
 
 

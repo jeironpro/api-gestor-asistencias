@@ -5,6 +5,7 @@ from datetime import date, time
 from sqlmodel import create_engine, Session, SQLModel
 from fastapi.testclient import TestClient
 from main import app
+from database.connection import obtener_db
 from models.Usuario import Usuario, RolUsuario
 from schemas.clase import CrearClase
 from services.clase_service import crear_clase_service
@@ -16,16 +17,24 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 
 
-@pytest.fixture(scope="function")
-def db():
-    # Crear las tablas en la base de datos de pruebas
+def obtener_test_session():
     SQLModel.metadata.create_all(bind=engine)
-
     with Session(engine) as session:
         yield session
-        session.rollback()
-
     SQLModel.metadata.drop_all(bind=engine)
+
+
+app.dependency_overrides[obtener_db] = obtener_test_session
+
+
+@pytest.fixture(scope="function")
+def db():
+    # Devuelve una sesión del engine de test
+    with Session(engine) as session:
+        SQLModel.metadata.create_all(bind=engine)
+        yield session
+        session.rollback()
+        SQLModel.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function")
@@ -63,6 +72,7 @@ def estudiante_test(db):
         contrasena="hashed_password",
         rol=RolUsuario.estudiante,
     )
+
     db.add(estudiante)
     db.commit()
     db.refresh(estudiante)
@@ -79,6 +89,5 @@ def clase_test(db, profesor_test):
         horaInicio=time(8, 0),
         horaFin=time(13, 30),
     )
-    nueva_clase = crear_clase_service(db, clase_data, profesor_test.id)
 
-    return nueva_clase
+    return crear_clase_service(db, clase_data, profesor_test.id)
