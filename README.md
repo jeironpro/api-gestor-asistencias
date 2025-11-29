@@ -13,11 +13,14 @@ La creación de esta API fue para aprender y practicar el desarrollo de una API 
 ## 📋 Requisitos
 - Python >= 3.12
 
-Instalación de python:
+### Instalación de python:  
     - Linux:
-        - Ubuntu/Debian: sudo apt update && sudo apt upgrade && sudo apt install python3.12
-        - Fedora: sudo dnf install python3.12
-    - Windows: Descargar e instalar desde https://www.python.org/downloads/
+        - Ubuntu/Debian: sudo apt update && sudo apt upgrade && sudo apt install python3.12  
+        - Arch Linux: sudo pacman -S python3.12  
+        - Fedora/RHEL: sudo dnf install python3.12
+    
+    - Windows: Descargar e instalar desde https://www.python.org/downloads/  
+    
     - MacOS: Descargar e instalar desde https://www.python.org/downloads/
 
 ## 🛠️ Variables de entorno
